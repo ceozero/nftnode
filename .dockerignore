@@ -1,0 +1,7 @@
+.git
+.github
+.gitignore
+README.md
+*.sh
+web/*_test.go
+deploy

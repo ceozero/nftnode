@@ -32,6 +32,22 @@
 curl -L https://raw.githubusercontent.com/wsuming97/nftnode/main/nft-forward.sh -o nft-forward.sh && chmod +x nft-forward.sh && ./nft-forward.sh
 ```
 
+## 🐳 Docker / GHCR 部署
+
+推送到 `main` 或 `v*.*.*` 标签会触发 [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml)，自动构建 `linux/amd64` 与 `linux/arm64` 镜像并发布到 GHCR。首次使用时，在仓库 **Settings → Actions → General** 确认允许 workflow 写入 packages；生成的包默认继承仓库可见性。
+
+在服务器执行以下命令启动 Compose 实例：
+
+```bash
+mkdir -p nftnode/{data,nft-forward,realm,logs}
+curl -fsSL https://raw.githubusercontent.com/wsuming97/nftnode/main/deploy/docker-compose.yml -o docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/wsuming97/nftnode/main/deploy/config.toml.example -o config.toml
+sed -i 's/change-me-now/替换为强密码/' config.toml
+docker compose up -d
+```
+
+Compose 会把配置、规则和日志持久化到当前目录。完整示例见 [`deploy/docker-compose.yml`](deploy/docker-compose.yml)、[`deploy/.env.example`](deploy/.env.example) 和 [`deploy/config.toml.example`](deploy/config.toml.example)。私有 GHCR 包需要先执行 `docker login ghcr.io`，并使用拥有 `read:packages` 权限的 token。
+
 ## 📖 使用说明
 
 ### 脚本界面

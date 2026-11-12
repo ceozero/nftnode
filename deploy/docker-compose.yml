@@ -1,0 +1,26 @@
+services:
+  nftnode:
+    image: ${NFTNODE_IMAGE:-ghcr.io/wsuming97/nftnode:latest}
+    container_name: nftnode
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${NFTNODE_PORT:-3456}:3456"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./data:/app/data
+      - ./nft-forward:/etc/nft-forward
+      - ./realm:/etc/realm
+      - ./logs:/var/log/nftnode
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3456/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
